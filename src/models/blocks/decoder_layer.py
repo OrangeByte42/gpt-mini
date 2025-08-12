@@ -1,0 +1,56 @@
+import torch
+from torch import nn
+from typing import Any
+
+from src.models.layers.layernorm import LayerNorm
+from src.models.layers.multihead_attention import MultiHeadAttention
+from src.models.layers.position_wise_feed_forward import PositionWiseFeedForward
+
+
+class DecoderLayer(nn.Module):
+    """Decoder Layer"""
+    def __init__(self: Any, d_model: int, num_heads: int, d_ff: int, drop_prob: float) -> None:
+        """constructor
+        @param d_model: dimension of the model
+        @param num_heads: number of attention heads
+        @param d_ff: dimension of the feed-forward network
+        @param drop_prob: dropout probability
+        @return: None
+        """
+        super(DecoderLayer, self).__init__()
+
+        # Sublayer-01
+        self.mha: MultiHeadAttention = MultiHeadAttention(d_model=d_model, num_heads=num_heads)
+        self.ln1: LayerNorm = LayerNorm(d_model=d_model)
+        self.dropout1: nn.Dropout = nn.Dropout(p=drop_prob)
+
+        # Sublayer-03
+        self.ffn: PositionWiseFeedForward = PositionWiseFeedForward(d_model=d_model, d_ff=d_ff, drop_prob=drop_prob)
+        self.ln2: LayerNorm = LayerNorm(d_model=d_model)
+        self.dropout2: nn.Dropout = nn.Dropout(p=drop_prob)
+
+    def forward(self: Any, X: torch.Tensor, mask: torch.Tensor) -> torch.Tensor:
+        """apply decoder layer
+        @param X: input tensor of shape (batch_size, seq_len, d_model)
+        @param src_mask: mask tensor for the source sequence of shape (batch_size, 1, 1, seq_len)
+        @param mask: mask tensor for the target sequence (self-attention) of shape (batch_size, 1, seq_len, seq_len)
+        @return: output tensor of shape (batch_size, seq_len, d_model)
+        """
+
+        # Compute self-attention
+        residual_X: torch.Tensor = X
+        X: torch.Tensor = self.mha(Q=X, K=X, V=X, mask=mask)
+        # Compute add & norm
+        X = self.dropout1(X)
+        X = self.ln1(X + residual_X)
+
+        # Compute position-wise feed-forward network
+        residual_X = X
+        X = self.ffn(X)
+        # Compute add & norm
+        X = self.dropout2(X)
+        X = self.ln2(X + residual_X)
+
+        # Return the output
+        return X
+
