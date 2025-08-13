@@ -7,11 +7,13 @@ class Tokenizer(ABC):
 
     @abstractmethod
     def __init__(self: Any, model_name: str, max_seq_len: int,
-                    cache_dir: Optional[str] = None) -> None:
+                    cache_dir: Optional[str] = None,
+                    max_vocab_size: Optional[int] = None) -> None:
         """Intialize tokenizer with model name and max sequence length
         @param model_name: Name of the tokenizer model (e.g., 'en_core_web_sm', 'bert-base-uncased')
         @param max_seq_len: Maximum sequence length for padding/truncation
         @param cache_dir: Optional directory to cache the tokenizer model
+        @param vocab_size: Optional size of the vocabulary, if not provided will be determined from the model
         """
         # Special tokens
         self._pad_token: str = None
@@ -26,6 +28,7 @@ class Tokenizer(ABC):
         self._eos_token_id: int = None
 
         # Vocabulary
+        self.max_vocab_size: Optional[int] = max_vocab_size
         self.vocab: Dict[str, int] = None
 
     # properties

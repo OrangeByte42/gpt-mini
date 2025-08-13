@@ -8,13 +8,15 @@ class SpacyTokenizer(Tokenizer):
     """SpaCy-based tokenizer for text preprocessing"""
 
     def __init__(self: Any, model_name: str, max_seq_len: int,
-                    cache_dir: Optional[str] = None) -> None:
+                    cache_dir: Optional[str] = None,
+                    max_vocab_size: Optional[int] = None) -> None:
         """Initialize SpaCy tokenizer
         @param model_name: SpaCy model name (e.g., 'en_core_web_sm', 'de_core_news_sm')
         @param max_seq_len: Maximum sequence length for padding/truncation
         @param cache_dir: Optional directory to cache the tokenizer model
+        @param max_vocab_size: Optional size of the vocabulary, if not provided will be determined from the model
         """
-        super(SpacyTokenizer, self).__init__(model_name, max_seq_len, cache_dir)  # Call parent constructor
+        super(SpacyTokenizer, self).__init__(model_name, max_seq_len, cache_dir, max_vocab_size)  # Call parent constructor
 
         # Store model name and max sequence length
         self.model_name: str = model_name

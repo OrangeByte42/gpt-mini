@@ -9,13 +9,14 @@ class BPETokenizer(Tokenizer):
     """Byte-Pair Encoding (BPE) Tokenizer"""
 
     def __init__(self: Any, model_name: str, max_seq_len: int,
-                    cache_dir: Optional[str] = None) -> None:
+                    cache_dir: Optional[str] = None,
+                    max_vocab_size: Optional[int] = None) -> None:
         """Byte-Pair Encoding (BPE) Tokenizer constructor
         @param model_name: Name of the model
         @param max_seq_len: Maximum sequence length
         @param cache_dir: Directory to cache the tokenizer files
         """
-        super(BPETokenizer, self).__init__(model_name, max_seq_len, cache_dir)  # Call parent constructor
+        super(BPETokenizer, self).__init__(model_name, max_seq_len, cache_dir, max_vocab_size)  # Call parent constructor
 
         # Store model name and max sequence length
         self.model_name: str = model_name
@@ -42,6 +43,7 @@ class BPETokenizer(Tokenizer):
         self._eos_token_id: int = 3     # End of sequence token ID
 
         # Initialize vocabulary with special tokens
+        self.max_vocab_size: Optional[int] = max_vocab_size
         self.vocab: Dict[bytes, int] = {
             self._pad_token: self._pad_token_id,
             self._unk_token: self._unk_token_id,
@@ -97,14 +99,14 @@ class ByteLevelBPETokenizer(BPETokenizer):
             new_bytes_seqs.append(new_bytes_seq)
         return new_bytes_seqs
 
-    def build_vocab(self: Any, texts: List[str], max_vocab_size: int) -> None:
+    def build_vocab(self: Any, texts: List[str]) -> None:
         """Build vocabulary from the provided texts
         @param texts: List of texts to build the vocabulary from
-        @param vocab_size: Desired vocabulary size
         @param min_freq: Minimum frequency for a token to be included in the vocabulary
         """
         # Ensure vocabulary size is greater than 256 (a byte range) plus the number of special tokens
-        assert max_vocab_size > 256 + len(self.special_tokens), "Vocabulary size must be greater than 256 plus the number of special tokens."
+        assert self.max_vocab_size is not None, "max_vocab_size must be provided."
+        assert self.max_vocab_size > 256 + len(self.special_tokens), "Vocabulary size must be greater than 256 plus the number of special tokens."
         self.vocab += {bytes(i): i + len(self.special_tokens) for i in range(256)}
 
         # Build byte-level corpus
@@ -113,7 +115,7 @@ class ByteLevelBPETokenizer(BPETokenizer):
 
         # BPE algorithm
         merges: Dict[bytes, int] = {}
-        num_merge: int = max_vocab_size - len(self.special_tokens) - 256  # Number of merges to perform
+        num_merge: int = self.max_vocab_size - len(self.special_tokens) - 256  # Number of merges to perform
 
         for i in range(num_merge):
             # Get byte pair statistics

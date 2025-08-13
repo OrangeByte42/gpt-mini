@@ -9,11 +9,13 @@ class BertTokenizer(Tokenizer):
     """BERT-based tokenizer for text preprocessing"""
 
     def __init__(self: Any, model_name: str, max_seq_len: int,
-                    cache_dir: Optional[str] = None) -> None:
+                    cache_dir: Optional[str] = None,
+                    max_vocab_size: Optional[int] = None) -> None:
         """Initialize BERT tokenizer
         @param model_name: BERT model name (e.g., 'bert-base-uncased', 'bert-base-german-dbmdz-cased')
         @param max_seq_len: Maximum sequence length
         @param cache_dir: Directory to cache the tokenizer model
+        @param max_vocab_size: Optional size of the vocabulary, if not provided will be determined from the model
         """
         super(BertTokenizer, self).__init__(model_name, max_seq_len, cache_dir)  # Call parent constructor
 
