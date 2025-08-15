@@ -4,8 +4,7 @@
 **/__pycache__
 
 /temp
-/data/original_datasets
-/data/preprocessed_datasets
+/data
 /outs
 /logs
 
