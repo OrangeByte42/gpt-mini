@@ -56,14 +56,14 @@ class BPETokenizer(Tokenizer):
 class ByteLevelBPETokenizer(BPETokenizer):
     """Byte-Level Byte-Pair Encoding (BPE) Tokenizer"""
 
-    def __init__(self: Any, model_name: str, max_seq_len: int,
+    def __init__(self: Any, model_name: str, max_seq_len: int, max_vocab_size: Optional[int] = None,
                     cache_dir: Optional[str] = None) -> None:
         """Byte-Level Byte-Pair Encoding (BPE) Tokenizer constructor
         @param model_name: Name of the model
         @param max_seq_len: Maximum sequence length
         @param cache_dir: Directory to cache the tokenizer files
         """
-        super(ByteLevelBPETokenizer, self).__init__(model_name, max_seq_len, cache_dir)
+        super(ByteLevelBPETokenizer, self).__init__(model_name, max_seq_len, cache_dir, max_vocab_size)
 
         self.merges: Dict[Tuple[bytes], int] = {}  # Dictionary to store merges
 
@@ -107,7 +107,7 @@ class ByteLevelBPETokenizer(BPETokenizer):
         # Ensure vocabulary size is greater than 256 (a byte range) plus the number of special tokens
         assert self.max_vocab_size is not None, "max_vocab_size must be provided."
         assert self.max_vocab_size > 256 + len(self.special_tokens), "Vocabulary size must be greater than 256 plus the number of special tokens."
-        self.vocab += {bytes(i): i + len(self.special_tokens) for i in range(256)}
+        self.vocab.update({bytes(i): i + len(self.special_tokens) for i in range(256)})
 
         # Build byte-level corpus
         byte_corpus: List[List[bytes]] = [text.encode('utf-8') for text in texts]

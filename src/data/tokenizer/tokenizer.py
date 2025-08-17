@@ -1,6 +1,8 @@
 from abc import ABC, abstractmethod
 from typing import Any, List, Dict, Optional
 
+from src.configs import DatasetsConfigs
+
 
 class Tokenizer(ABC):
     """Abstract base class for tokenizers, provides common interface"""
@@ -28,7 +30,7 @@ class Tokenizer(ABC):
         self._eos_token_id: int = None
 
         # Vocabulary
-        self.max_vocab_size: Optional[int] = max_vocab_size
+        self.max_vocab_size: Optional[int] = None
         self.vocab: Dict[str, int] = None
 
     # properties
@@ -140,6 +142,29 @@ class Tokenizer(ABC):
         elif model_name in ["bert-base-uncased", "bert-base-german-dbmdz-cased"]:
             from src.data.tokenizer.bert_tokenizer import BertTokenizer
             return BertTokenizer(model_name, max_seq_len, cache_dir)
+        elif model_name in ["byte_level_bpe"]:
+            from src.data.tokenizer.bpe_tokenizer import ByteLevelBPETokenizer
+            return ByteLevelBPETokenizer(model_name, max_seq_len, cache_dir)
         else:
             raise ValueError(f"Unsupported tokenizer model: {model_name}")
+
+
+    @staticmethod
+    def load(configs: DatasetsConfigs) -> 'Tokenizer':
+        """Factory method to load the appropriate tokenizer based on configurations
+        @param configs: Configuration object containing tokenizer settings
+        @return: An instance of a Tokenizer subclass
+        """
+        if configs.TOKENIZER_NAME in ["en_core_web_sm", "de_core_news_sm"]:
+            from src.data.tokenizer.spacy_tokenizer import SpacyTokenizer
+            return SpacyTokenizer(configs.TOKENIZER_NAME, configs.MAX_LENGTH, configs.TOKENIZER_CACHE_DIR)
+        elif configs.TOKENIZER_NAME in ["bert-base-uncased", "bert-base-german-dbmdz-cased"]:
+            from src.data.tokenizer.bert_tokenizer import BertTokenizer
+            return BertTokenizer(configs.TOKENIZER_NAME, configs.MAX_LENGTH, configs.TOKENIZER_CACHE_DIR)
+        elif configs.TOKENIZER_NAME in ["byte_level_bpe"]:
+            from src.data.tokenizer.bpe_tokenizer import ByteLevelBPETokenizer
+            return ByteLevelBPETokenizer(configs.TOKENIZER_NAME, configs.MAX_LENGTH, configs.MAX_VOCAB_SIZE,
+                                            configs.TOKENIZER_CACHE_DIR)
+        else:
+            raise ValueError(f"Unsupported tokenizer model: {configs.TOKENIZER_NAME}")
 
