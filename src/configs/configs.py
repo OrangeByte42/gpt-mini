@@ -17,7 +17,7 @@ class DatasetConfigs:
     TOKENIZED_CACHE_DIR: str = os.path.join(DATASET_DIR, "tokenized_cache")
 
     # Pre-processing parameters
-    LENGTH_RANGE: Tuple[int, int] = (64, 512)
+    LENGTH_RANGE: Tuple[int, int] = (64 - 2, 512 - 2)   # - 2 for SOS & EOS tokens
     MAX_LENGTH: int = 512
 
     # Length distribution showing and processing num of processor

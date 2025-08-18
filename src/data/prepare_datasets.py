@@ -4,7 +4,7 @@ from typing import Any, List, Tuple, Dict
 from datasets import DatasetDict, Dataset
 from datasets import load_dataset, concatenate_datasets
 
-from src.configs.data_configs import DatasetConfigs
+from src.configs.configs import DatasetConfigs
 from src.data.utils import show_length_distribution
 from src.data.utils import load_parquets, save_as_parquets
 
@@ -51,7 +51,7 @@ def split_long_texts(flatten_dataset: Dataset, column_name: str, length_range: T
         batched=True,
         batch_size=process_batch_size,
         num_proc=num_proc,
-        remove_columns=flatten_dataset.column_names
+        remove_columns=flatten_dataset.column_names     # Must, avoid mismatch error, one sample to multiple samples
     )
 
     # Return the new dataset with split texts
@@ -177,7 +177,10 @@ def run_ori_dataset_loading_pipeline(configs: DatasetConfigs, hf_ds_addr: str, l
     print(f"Successfully saved the processed dataset to cache.")
     print(f"")
 
-def run_combine_datasets_pipeline(configs: DatasetConfigs, dataset_dirs: List[str]) -> None:
+    # Return the processed cache directory
+    return processed_cache_dir
+
+def run_datasets_combining_pipeline(configs: DatasetConfigs, dataset_dirs: List[str]) -> None:
     """Combine multiple datasets into a single dataset and save it to cache.
     @param configs: Dataset configurations.
     @param dataset_dirs: List of directories containing the datasets to combine.
@@ -257,7 +260,7 @@ if __name__ == "__main__":
     )
 
     # Combine datasets into a single dataset
-    run_combine_datasets_pipeline(
+    run_datasets_combining_pipeline(
         configs=configs,
         dataset_dirs=[wikipedia_en, open_text_books]
     )
