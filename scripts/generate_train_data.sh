@@ -1,1 +1,0 @@
-python -m src.data.load_ori_datasets
