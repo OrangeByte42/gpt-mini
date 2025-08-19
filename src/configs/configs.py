@@ -59,6 +59,43 @@ class TokenizerConfigs:
         os.makedirs(self.TOKENIZER_CACHE_DIR, exist_ok=True)
 
 
+@dataclass
+class ModelConfigs:
+    """Configuration for model."""
+    NUM_LAYERS: int = 12
+    D_MODEL: int = 768
+    NUM_HEADS: int = 12
+    D_FF: int = 3072
+    DROP_PROB: float = 0.3
+
+
+@dataclass
+class TrainingConfigs:
+    """Configuration for training."""
+    # Dataset parameters
+    BATCH_SIZE: int = 6
+    NUM_WORKERS: int = 4
+
+    # Training parameters
+    WEIGHT_DECAY: float = 1e-4
+    EPOCHES_NUM: int = 100
+    WARMUP: int = 8
+    INIT_LR: float = 5e-5
+    ADAM_EPS: float = 1e-8
+    PATIENCE: int = 8
+    FACTOR: float = 0.8
+    CLIP: float = 0.7
+
+    # Saving parameters
+    CHECKPOINT_DIR: str = os.path.join(".", "outs", "checkpoints")
+    TRAIN_TRACE_DIR: str = os.path.join(".", "outs", "train_trace")
+    SAMPLE_TRACE_DIR: str = os.path.join(".", "outs", "sample_trace")
+
+    # Create directories if they do not exist
+    def __post_init__(self: Any) -> None:
+        os.makedirs(self.CHECKPOINT_DIR, exist_ok=True)
+        os.makedirs(self.TRAIN_TRACE_DIR, exist_ok=True)
+        os.makedirs(self.SAMPLE_TRACE_DIR, exist_ok=True)
 
 
 

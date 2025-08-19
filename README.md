@@ -9,6 +9,7 @@ Datasets:
 - https://huggingface.co/datasets/datablations/c4-subsets
 
 
-
+python -u -m src.data.prepare_datasets
+python -u -m src.data.bpe_tokenizer
 
 

@@ -45,6 +45,11 @@ class BpeTokenizer:
         self._eos_token: str = "[EOS]"
 
     @property
+    def vocab_size(self: Any) -> int:
+        """Return the vocabulary size of the tokenizer."""
+        return self.tokenizer.vocab_size
+
+    @property
     def unk_token(self: Any) -> str:
         """Return the unknown token."""
         return self._unk_token
@@ -63,6 +68,27 @@ class BpeTokenizer:
     def eos_token(self: Any) -> str:
         """Return the end of sequence token."""
         return self._eos_token
+
+    @property
+    def unk_id(self: Any) -> int:
+        """Return the unknown token ID."""
+        return self.tokenizer.vocab[self._unk_token]
+
+    @property
+    def pad_id(self: Any) -> int:
+        """Return the padding token ID."""
+        return self.tokenizer.vocab[self._pad_token]
+
+    @property
+    def sos_id(self: Any) -> int:
+        """Return the start of sequence token ID."""
+        return self.tokenizer.vocab[self._sos_token]
+
+    @property
+    def eos_id(self: Any) -> int:
+        """Return the end of sequence token ID."""
+        return self.tokenizer.vocab[self._eos_token]
+
 
     def run_tokenizer_generation_pipeline(self: Any) -> None:
         """Run the tokenizer generation pipeline."""
@@ -144,12 +170,12 @@ class BpeTokenizer:
         ]
 
         # Tokenize the batch
-        token_ids_batch: Dict[str, List[int]] = self.tokenizer(batch[column_name], truncation=True, padding=True,
+        token_ids_batch: Dict[str, List[int]] = self.tokenizer(batch[column_name], truncation=True, padding="max_length",
                                                                 max_length=self.dataset_configs.MAX_LENGTH,
                                                                 add_special_tokens=True)
 
         # Return the tokenized batch
-        return token_ids_batch
+        return {"input_ids": token_ids_batch["input_ids"]}
 
     def run_dataset_tokenization_pipeline(self: Any) -> None:
         """Tokenize the dataset using the BPE tokenizer."""
@@ -191,7 +217,13 @@ class BpeTokenizer:
         print(f"Successfully tokenized the dataset and saved it to {output_dir}.")
         print(f"")
 
+    def decode(self: Any, ids: List[int], skip_special_tokens: bool = True) -> str:
+        """Decode a list of token IDs to text."""
+        return self.tokenizer.decode(ids, skip_special_tokens=skip_special_tokens)
 
+    def encode(self: Any, text: str, add_special_tokens: bool = True) -> List[int]:
+        """Encode a text to a list of token IDs."""
+        return self.tokenizer.encode(text, add_special_tokens=add_special_tokens)
 
 if __name__ == "__main__":
     """Main function to run the BPE tokenizer generation pipeline."""
