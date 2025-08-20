@@ -244,12 +244,12 @@ if __name__ == "__main__":
 
     # Load original datasets from Hugging Face or local files
     ## wikipedia-en
-    wikipedia_en: str = run_ori_dataset_loading_pipeline(
-        configs=configs,
-        hf_ds_addr="izumi-lab/wikipedia-en-20230720",
-        local_ds_name="wikipedia_en",
-        column_name="text"
-    )
+    # wikipedia_en: str = run_ori_dataset_loading_pipeline(
+    #     configs=configs,
+    #     hf_ds_addr="izumi-lab/wikipedia-en-20230720",
+    #     local_ds_name="wikipedia_en",
+    #     column_name="text"
+    # )
 
     ## open-text-books
     open_text_books: str = run_ori_dataset_loading_pipeline(
@@ -262,6 +262,7 @@ if __name__ == "__main__":
     # Combine datasets into a single dataset
     run_datasets_combining_pipeline(
         configs=configs,
-        dataset_dirs=[wikipedia_en, open_text_books]
+        # dataset_dirs=[wikipedia_en, open_text_books]
+        dataset_dirs=[open_text_books],
     )
 
