@@ -66,7 +66,7 @@ class ModelConfigs:
     D_MODEL: int = 768
     NUM_HEADS: int = 12
     D_FF: int = 3072
-    DROP_PROB: float = 0.3
+    DROP_PROB: float = 0.1
 
 
 @dataclass
@@ -74,13 +74,13 @@ class TrainingConfigs:
     """Configuration for training."""
     # Dataset parameters
     BATCH_SIZE: int = 28
-    NUM_WORKERS: int = 4
+    NUM_WORKERS: int = 0
 
     # Training parameters
     WEIGHT_DECAY: float = 1e-4
-    EPOCHES_NUM: int = 100
-    WARMUP: int = 8
-    INIT_LR: float = 5e-5
+    EPOCHES_NUM: int = 50
+    WARMUP: int = 5
+    INIT_LR: float = 1e-2
     ADAM_EPS: float = 1e-8
     PATIENCE: int = 8
     FACTOR: float = 0.8

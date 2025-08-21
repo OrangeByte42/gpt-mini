@@ -4,6 +4,8 @@ import datetime
 import math
 from typing import Any, Optional, List, Dict, Union
 
+os.environ["TOKENIZERS_PARALLELISM"] = "false"
+
 import torch
 from torch import nn
 from torch import distributed as dist
@@ -199,7 +201,7 @@ class Trainer:
             epoch_loss += loss.item()
             total_batches += 1
 
-            print(f"[Training Trace] >>> Batch {total_batches:0>4} :: Loss: {loss.item():<8.4f}, PPL: {math.exp(loss.item()):<8.4f}", end="\r")
+            # print(f"[Training Trace] >>> Batch {total_batches:0>4} :: Loss: {loss.item():<8.4f}, PPL: {math.exp(loss.item()):<8.4f}", end="\r")
 
         # Convert training loss and batch count to tensor
         local_loss: torch.Tensor = torch.tensor(epoch_loss, device=device)
@@ -452,10 +454,5 @@ if __name__ == "__main__":
 
     # Start training
     trainer.train()
-
-
-
-
-
 
 
